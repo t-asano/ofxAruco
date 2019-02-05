@@ -51,7 +51,7 @@ void ofxAruco::setupXML(string calibrationXML,float w, float h, string boardConf
 	markerSize = _markerSize;
 	detector.setThresholdMethod(aruco::MarkerDetector::ADPT_THRES);
 	
-	
+	maxAge = 7;
 
 	camParams.readFromXMLFile(ofToDataPath(calibrationXML));
 	camParams.resize(cv::Size(w,h));
@@ -90,6 +90,21 @@ void ofxAruco::setUseHighlyReliableMarker(string dictionaryFile)
 	detector.setThresholdParams(21, 7);
 	detector.setCornerRefinementMethod(aruco::MarkerDetector::LINES);
 	detector.setWarpSize((D[0].n() + 2) * 8);
+}
+
+//setup without calibration to work on 2d
+void ofxAruco::setup2d(float w, float h, string boardConfigFile, float _markerSize) {
+    size.width = w;
+    size.height = h;
+    markerSize = _markerSize;
+    detector.setThresholdMethod(aruco::MarkerDetector::ADPT_THRES);
+
+    maxAge = 3; // for TVP
+
+    // bgraf
+    addBoardConf(boardConfigFile);
+
+    if (threaded) startThread();
 }
 
 void ofxAruco::addBoardConf(string boardConfigFile) {
@@ -227,7 +242,34 @@ void ofxAruco::findBoards(ofPixels & pixels){
 	}
 }
 
-void ofxAruco::draw(){
+void ofxAruco::draw() {
+    if (camParams.isValid()) {
+        draw3d();
+    } else {
+        draw2d();
+    }
+}
+
+void ofxAruco::draw2d() {
+    ofSetColor(255,0,0);
+    for (int i = 0; i < markers.size(); i++) {
+        cv::Point2f p0, p1;
+        ofPoint ctr(0, 0);
+        for (int j = 0; j < 4; j++) {
+            p0 = markers[i][j];
+            p1 = markers[i][(j + 1) % 4];
+            ofDrawLine(p0.x, p0.y, p1.x, p1.y);
+            ctr.x += p0.x;
+            ctr.y += p0.y;
+        }
+        ctr.x /= 4.;
+        ctr.y /= 4.;
+        ofDrawBitmapString(ofToString(markers[i].id), ctr);
+    }
+    ofSetColor(255);
+}
+
+void ofxAruco::draw3d() {
 	glMatrixMode( GL_PROJECTION );
 	glPushMatrix();
 
@@ -303,7 +345,13 @@ vector<float> ofxAruco::getBoardProbabilities() {
 	return boardProbabilities;
 }
 
-void ofxAruco::begin(int marker){
+void ofxAruco::begin(int marker) {
+    if (!camParams.isValid())
+    {
+        ofLogError("ofxAruco::begin add some camera parameters on setup to use this method");
+        return;
+    }
+
 	glMatrixMode( GL_PROJECTION );
 	glPushMatrix();
 
@@ -332,7 +380,13 @@ void ofxAruco::begin(int marker){
 	glLoadMatrixf(matrixf);
 }
 
-void ofxAruco::end(){
+void ofxAruco::end() {
+    if (!camParams.isValid())
+    {
+        ofLogError("ofxAruco::end add some camera parameters on setup to use this method");
+        return;
+    }
+
 	glMatrixMode( GL_MODELVIEW );
 	glPopMatrix();
 

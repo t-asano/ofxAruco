@@ -26,6 +26,7 @@ public:
 	void setThreaded(bool threaded); // defaults to true
 	void setup(string calibrationFile,float w, float h, string boardConfig="", float markerSize=.15);
 	void setupXML(string calibrationXML,float w, float h, string boardConfig="", float markerSize=.15);
+    void setup2d(float w, float h, string boardConfig="", float markerSize=.15);
 
 	void setUseHighlyReliableMarker(string dictionaryFile);
     
@@ -35,10 +36,9 @@ public:
 	void detectBoards(ofPixels & pixels);
     
 	void draw();
+    void draw3d();
+    void draw2d();
 
-	
-
-    
 	vector<aruco::Marker> & getMarkers();
     //    bgraf
     //	aruco::Board & getBoard();
@@ -74,8 +74,6 @@ public:
 
 	void setMinMaxMarkerDetectionSize(float minSize, float maxSize); //the detection size of a marker in fraction of camera width
 	void setMarkerSize(float markerSizeInMeter); 
-	
-
     
     // bgraf
     //	aruco::BoardConfiguration & getBoardConfig();
@@ -119,8 +117,7 @@ private:
 	double projMatrix[16];
 	float projfMatrix[16];
 	ofMatrix4x4 ofprojMatrix;
-    
-    
+
 	aruco::Marker * findMarker(int id);
 	TrackedMarker * findTrackedMarker(int id);
 	bool threaded;
