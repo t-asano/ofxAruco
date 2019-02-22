@@ -27,7 +27,7 @@ public:
     void detectMarkers(ofPixels & pixels);
     int getNumMarkers();
     int getNumMarkersValidGate();
-    void draw2dGate(ofColor valid, ofColor invalid);
+    void draw2dGate(ofColor valid, ofColor invalid, bool showId);
 
     void setMarkerSize(float markerSizeInMeter);
     void setMinMaxMarkerDetectionSize(float minSize, float maxSize); // in fraction of camera width

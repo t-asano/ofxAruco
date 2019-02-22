@@ -100,7 +100,7 @@ bool ofxAruco::isValidGate(cv::Point2f p0, cv::Point2f p1) {
     }
 }
 
-void ofxAruco::draw2dGate(ofColor valid, ofColor invalid) {
+void ofxAruco::draw2dGate(ofColor valid, ofColor invalid, bool showId) {
     for (int i = 0; i < markers.size(); i++) {
         cv::Point2f p0, p1;
         ofPoint ctr(0, 0);
@@ -113,12 +113,16 @@ void ofxAruco::draw2dGate(ofColor valid, ofColor invalid) {
             p0 = markers[i][j];
             p1 = markers[i][(j + 1) % 4];
             ofDrawLine(p0.x, p0.y, p1.x, p1.y);
-            ctr.x += p0.x;
-            ctr.y += p0.y;
+            if (showId) {
+                ctr.x += p0.x;
+                ctr.y += p0.y;
+            }
         }
-        ctr.x /= 4.;
-        ctr.y /= 4.;
-        ofDrawBitmapString(ofToString(markers[i].id), ctr);
+        if (showId) {
+            ctr.x /= 4.;
+            ctr.y /= 4.;
+            ofDrawBitmapString(ofToString(markers[i].id), ctr);
+        }
     }
 }
 
