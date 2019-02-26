@@ -52,15 +52,14 @@ MarkerDetector::MarkerDetector() {
     _thresParam1 = _thresParam2 = 7;
     _cornerMethod = LINES;
     _useLockedCorners = false;
-    //         _cornerMethod=SUBPIX;
     _thresParam1_range = 0;
     _markerWarpSize = 56;
     _speed = 0;
     markerIdDetector_ptrfunc = aruco::FiducidalMarkers::detect;
     _minSize = 0.04;
     _maxSize = 0.5;
-
-    _borderDistThres = 0.025; // corners in a border of 2.5% of image  are ignored
+    //_borderDistThres = 0.025; // corners in a border of 2.5% of image  are ignored
+    _borderDistThres = 0;
 }
 /************************************
  *
@@ -190,7 +189,6 @@ void MarkerDetector::detect(const cv::Mat &input, vector< Marker > &detectedMark
     joinVectors(markers_omp, detectedMarkers, true);
     joinVectors(candidates_omp, _candidates, true);
 
-
     double t4 = cv::getTickCount();
 
     /// refine the corner location if desired
@@ -221,9 +219,12 @@ void MarkerDetector::detect(const cv::Mat &input, vector< Marker > &detectedMark
 
     // sort by id
     std::sort(detectedMarkers.begin(), detectedMarkers.end());
-    // there might be still the case that a marker is detected twice because of the double border indicated earlier,
-    // detect and remove these cases
     vector< bool > toRemove(detectedMarkers.size(), false);
+
+#if false /* xxx */
+    // there might be still the case that a marker is detected twice
+    // because of the double border indicated earlier,
+    // detect and remove these cases
     for (int i = 0; i < int(detectedMarkers.size()) - 1; i++) {
         if (detectedMarkers[i].id == detectedMarkers[i + 1].id && !toRemove[i + 1]) {
             // deletes the one with smaller perimeter
@@ -233,7 +234,7 @@ void MarkerDetector::detect(const cv::Mat &input, vector< Marker > &detectedMark
                 toRemove[i] = true;
         }
     }
-
+#endif /* xxx */
 
     // remove markers with corners too near the image limits
     int borderDistThresX = _borderDistThres * float(input.cols);
@@ -247,7 +248,6 @@ void MarkerDetector::detect(const cv::Mat &input, vector< Marker > &detectedMark
             }
         }
     }
-
 
     // remove the markers marker
     removeElements(detectedMarkers, toRemove);
