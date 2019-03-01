@@ -16,6 +16,11 @@ ofxAruco::ofxAruco()
 
 void ofxAruco::setThreaded(bool _threaded) {
     threaded = _threaded;
+    if (isThreadRunning() && !threaded) {
+        stopThread();
+        condition.signal();
+        waitForThread(false, 3000);
+    }
 }
 
 void ofxAruco::setUseHighlyReliableMarker(string dictionaryFile) {
@@ -149,6 +154,11 @@ void ofxAruco::threadedFunction() {
         lock();
         if (!newDetectMarkers) {
             condition.wait(mutex);
+            if (!threaded) {
+                newDetectMarkers = false;
+                unlock();
+                continue;
+            }
         }
         swap(frontPixels, backPixels);
         newDetectMarkers = false;
