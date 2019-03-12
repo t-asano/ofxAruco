@@ -88,7 +88,8 @@ int ofxAruco::getNumMarkers() {
 int ofxAruco::getNumMarkersValidGate() {
     int num = 0;
     for (int i = 0; i < markers.size(); i++) {
-        if (isValidGate(markers[i][0], markers[i][1])) {
+        // check outer line
+        if (isValidGate(markers[i][3], markers[i][2])) {
             num++;
         }
     }
@@ -109,7 +110,8 @@ void ofxAruco::draw2dGate(ofColor valid, ofColor invalid, bool showId) {
     for (int i = 0; i < markers.size(); i++) {
         cv::Point2f p0, p1;
         ofPoint ctr(0, 0);
-        if (isValidGate(markers[i][0], markers[i][1])) {
+        // check outer line
+        if (isValidGate(markers[i][3], markers[i][2])) {
             ofSetColor(valid);
         } else {
             ofSetColor(invalid);
