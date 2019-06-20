@@ -55,6 +55,7 @@ void ofxAruco::setup2d(float w, float h, float _markerSize) {
 void ofxAruco::detectMarkers(ofPixels & pixels) {
     if (!threaded) {
         findMarkers(pixels);
+        fpsCounter.newFrame();
     } else {
         lock();
         frontPixels = pixels;
@@ -62,6 +63,7 @@ void ofxAruco::detectMarkers(ofPixels & pixels) {
         if (foundMarkers) {
             swap(markers, intraMarkers); // copy to "markers"
             foundMarkers = false;
+            fpsCounter.newFrame();
         }
         condition.signal();
         unlock();
@@ -81,8 +83,8 @@ void ofxAruco::findMarkers(ofPixels & pixels) {
     }
 }
 
-int ofxAruco::getNumCandidates() {
-    return detector.getNumCandidates();
+int ofxAruco::getNumRectangles() {
+    return detector.getNumRectangles();
 }
 
 int ofxAruco::getNumMarkers() {
@@ -135,6 +137,11 @@ void ofxAruco::draw2dGate(ofColor valid, ofColor invalid, bool showId) {
             ofDrawBitmapString(ofToString(markers[i].id), ctr);
         }
     }
+}
+
+double ofxAruco::getFps()
+{
+    return fpsCounter.getFps();
 }
 
 void ofxAruco::setMarkerSize(float markerSize_)

@@ -158,6 +158,7 @@ void MarkerDetector::detect(const cv::Mat &input, vector< Marker > &detectedMark
     // find all rectangles in the thresholdes image
     vector< MarkerCandidate > MarkerCanditates;
     detectRectangles(thres_images, MarkerCanditates);
+    _rectangles = MarkerCanditates.size();
 
     double t3 = cv::getTickCount();
 
@@ -1096,9 +1097,4 @@ void MarkerDetector::findCornerMaxima(vector< cv::Point2f > &Corners, const cv::
         Corners[i] = best + minLimit;
     }
 }
-
-int MarkerDetector::getNumCandidates() {
-    return _candidates.size();
-};
-
 };

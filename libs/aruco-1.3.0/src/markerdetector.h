@@ -294,7 +294,8 @@ class ARUCO_EXPORTS MarkerDetector {
     static void glGetProjectionMatrix(CameraParameters &CamMatrix, cv::Size orgImgSize, cv::Size size, double proj_matrix[16], double gnear, double gfar,
                                       bool invert = false) throw(cv::Exception);
 
-    int getNumCandidates();
+    int _rectangles;
+    int getNumRectangles() const { return _rectangles; }
 
   private:
     bool warp_cylinder(cv::Mat &in, cv::Mat &out, cv::Size size, MarkerCandidate &mc) throw(cv::Exception);

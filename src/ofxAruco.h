@@ -25,10 +25,11 @@ public:
     void setup2d(float w, float h, float markerSize=.15);
 
     void detectMarkers(ofPixels & pixels);
-    int getNumCandidates();
+    int getNumRectangles();
     int getNumMarkers();
     int getNumMarkersValidGate();
     void draw2dGate(ofColor valid, ofColor invalid, bool showId);
+    double getFps();
 
     void setMarkerSize(float markerSizeInMeter);
     void setMinMaxMarkerDetectionSize(float minSize, float maxSize); // in fraction of camera width
@@ -54,6 +55,8 @@ private:
 
     bool threaded;
     bool foundMarkers;
+
+    ofFpsCounter fpsCounter;
 };
 
 #endif /* OFXARUCO_H_ */
