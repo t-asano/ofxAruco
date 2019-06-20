@@ -81,6 +81,10 @@ void ofxAruco::findMarkers(ofPixels & pixels) {
     }
 }
 
+int ofxAruco::getNumCandidates() {
+    return detector.getNumCandidates();
+}
+
 int ofxAruco::getNumMarkers() {
     return markers.size();
 }

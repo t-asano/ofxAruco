@@ -1096,4 +1096,9 @@ void MarkerDetector::findCornerMaxima(vector< cv::Point2f > &Corners, const cv::
         Corners[i] = best + minLimit;
     }
 }
+
+int MarkerDetector::getNumCandidates() {
+    return _candidates.size();
+};
+
 };
